@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Recognition</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+        }
+
+        #liveVideo {
+            transform: scaleX(-1); /* Mirror effect */
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .result-box {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .face-card {
+            border: 1px solid #aaa;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .face-card img {
+            width: 150px;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .error-message {
+            color: red;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            #liveVideo {
+                width: 100%;
+                height: auto;
+            }
+
+            .result-box {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Face Recognition</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+        }
+
+        #liveVideo {
+            transform: scaleX(-1); /* Mirror effect */
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            margin: 0 auto;
+            display: block;
+            width: 640px;
+            height: 480px;
+        }
+
+        .result-box {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .face-card {
+            border: 1px solid #aaa;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .face-card img {
+            width: 150px;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .error-message {
+            color: red;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            #liveVideo {
+                width: 100%;
+                height: auto;
+            }
+
+            .result-box {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Real-Time Face Recognition</h1>
+
+    <!-- ওয়েবক্যাম ভিডিও -->
+    <video id="liveVideo" autoplay></video>
+
+    <!-- রেজাল্ট ডিসপ্লে -->
+    <div class="result-box">
+        {% if matched_data %}
+            <h3>Match Found!</h3>
+            <p><strong>Name:</strong> {{ matched_data.name }}</p>
+            <p><strong>Roll:</strong> {{ matched_data.roll }}</p>
+            <p><strong>Address:</strong> {{ matched_data.address }}</p>
+            <img src="{{ matched_data.image.url }}" width="200" alt="Matched Face" />
+        {% elif error %}
+            <p class="error-message">{{ error }}</p>
+        {% else %}
+            <h3>All Faces in Database:</h3>
+            {% for face in all_faces %}
+                <div class="face-card">
+                    <p><strong>Name:</strong> {{ face.name }}</p>
+                    <p><strong>Roll:</strong> {{ face.roll }}</p>
+                    <p><strong>Address:</strong> {{ face.address }}</p>
+                    <img src="{{ face.image.url }}" alt="Face Image" />
+                </div>
+            {% empty %}
+                <p>No faces found in database.</p>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <script>
+        const video = document.getElementById('liveVideo');
+        const csrfToken = '{{ csrf_token }}';
+
+        // ওয়েবক্যাম চালু করা
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+                // প্রতি ২ সেকেন্ডে ছবি ক্যাপচার ও সার্ভারে পাঠানো
+                setInterval(capture, 2000);
+            })
+            .catch(err => {
+                console.error("Error accessing webcam: ", err);
+            });
+
+        function capture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+
+            const imageData = canvas.toDataURL('image/jpeg');
+
+            fetch(window.location.href, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrfToken
+                },
+                body: `image_data_base64=${encodeURIComponent(imageData)}`
+            })
+            .then(response => response.text())
+            .then(html => {
+                document.body.innerHTML = html;
+            })
+            .catch(err => console.error("Error sending image data:", err));
+        }
+    </script>
+</body>
+</html>

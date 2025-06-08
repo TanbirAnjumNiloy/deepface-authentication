@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Page</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: url('/static/assets/img/1694787865311.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            position: absolute;
+            top: 50%;
+            left: 20%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .container h2 {
+            text-align: center;
+        }
+
+        .inputBox {
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .inputBox input {
+            width: 100%;
+            padding: 10px;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #000;
+            outline: none;
+            color: #000;
+        }
+
+        .inputBox input:focus ~ span,
+        .inputBox input:valid ~ span {
+            top: -20px;
+            left: 0;
+            color: #007bff; /* Change color on focus or when input is not empty */
+        }
+
+        .links {
+            text-align: center;
+        }
+
+        .links a {
+            text-decoration: none;
+            margin: -50 -50px;
+            color: #61656D;
+        }
+
+        /* Style the submit button */
+        button[type="submit"] {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #61656D;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3; /* Darker shade on hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="inputBox">
+                <input type="text" required="required" name="username">
+                <span>Username</span>
+            </div><br><br>
+            <div class="inputBox">
+                <input type="password" required="required" name="pass">
+                <span>Password</span>
+            </div>
+            <div class="links">
+                <a href="{% url 'signup' %}">Sign up</a>
+            </div> <br> 
+            
+            <button type="submit">Unlock</button>
+        </form>
+    </div>
+</body>
+</html>

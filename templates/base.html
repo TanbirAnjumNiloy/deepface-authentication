@@ -1,0 +1,107 @@
+{% load static %}
+<style type="text/css">
+	
+
+	body {
+  font-family: Arial, sans-serif;
+}
+
+header {
+  background-color: skyblue;
+  padding: 0.1px;
+  text-align: center;
+}
+
+nav {
+  background-color: lightblue;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+}
+
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+nav li {
+  margin: 0 10px;
+}
+
+nav a {
+  text-decoration: none;
+  color: black;
+}
+
+#logout-button {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+main {
+  padding: 20px;
+}
+
+section {
+  margin: 20px 0;
+}
+
+footer {
+  background-color: lightgray;
+  padding: 20px;
+  text-align: center;
+}
+
+
+</style>
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <title>Inventory Project</title>
+</head>
+<body>
+  <!-- header>
+    <h1> Chottogram Bekhari </h1>
+  </header-->
+  <nav>
+    <ul>
+      <!-- <li><a href="{% url 'main' %}"><b>Setup</b></a></li>
+    
+      <li><a href=""><b>Analyses</b></a></li>
+      <li><a href=""><b>Control Panel</b></a></li> -->
+    </ul>
+    <button id="logout-button"><a href="{% url 'logout' %}">Logout</a></button>
+  </nav>
+  <main>
+ 
+  </main>
+  
+  <script src="script.js"></script>
+</body>
+</html>
+
+
+<script type="text/javascript">
+	
+	// Add your JavaScript code here
+
+const logoutButton = document.getElementById("logout-button");
+logout
+
+
+</script>
+
+{% block content %}
+
+ {% endblock %}
+
